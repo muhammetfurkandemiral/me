@@ -29,9 +29,135 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;}
 
-body {
-	line-height: 1;
+:root {
+  --blue: #38bdf8;
+  --dark: #0f172a;
+  --light: #f8fafc;
+  --accent: #facc15;
 }
+
+* { box-sizing: border-box; transition: all 0.25s ease; }
+
+body {
+  line-height: 1;
+  margin:0;
+  height:100vh;
+  background: radial-gradient(circle at center, #1e293b, var(--dark));
+  color: var(--light);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  text-align:center;
+}
+
+.inspectable:hover {
+  outline: 2px dashed var(--blue);
+  outline-offset: 4px;
+  cursor: crosshair;
+}
+
+/* Avatar */
+.avatar {
+  width:240px;
+  height:340px;
+  position:relative;
+  margin-bottom:1rem;
+}
+.avatar img { width:100%; height:100%; border-radius:50%; display:block; }
+/* Gözler */
+.eye { position:absolute; width:32px; height:32px; background:#fff; border-radius:50%; top:90px; }
+.eye.left { left:63px; }
+.eye.right { right:85px; }
+.pupil { width:16px; height:16px; background:#000; border-radius:50%; position:absolute; top:12px; left:12px; }
+
+/* Bugless counter */
+.counter { font-size:1.2rem; margin:1em 0; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.2); padding:0.6em 1.2em; border-radius:10px; }
+
+.bug-emoji {
+  position: absolute;
+  font-size: 24px;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.laser {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255,0,0,0.8) 0%, rgba(255,0,0,0.2) 100%);
+  transform-origin: left center;
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(1px);
+  box-shadow: 0 0 8px red;
+  animation: laserShot 0.3s ease-out forwards;
+  mix-blend-mode: screen;
+}
+
+@keyframes laserShot {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+  100% {
+    width: var(--final-width);
+    opacity: 0.8;
+  }
+}
+/* Hover outline efektleri */
+
+/* Buttons */
+.btn {
+  background: transparent;
+  border: 1px solid var(--blue);
+  color: var(--blue);
+  font-size: 1rem;
+  border-radius:8px;
+  padding:0.5rem 1rem;
+  margin:0.5em;
+  cursor:pointer;
+}
+.btn:hover { background:var(--blue); color:var(--dark); }
+
+/* Message / Easter Egg */
+.message {
+  position: fixed;
+  bottom:30px;
+  background:#1e293b;
+  border:1px solid var(--blue);
+  border-radius:10px;
+  padding:12px 18px;
+  font-size:1rem;
+  opacity:0;
+  transform:translateY(20px);
+  transition: all 0.4s ease;
+}
+.message.show { opacity:1; transform:translateY(0); }
+
+/* Dashboard mini cards */
+.dashboard {
+  display:flex;
+  gap:1em;
+  margin-top:2em;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.card {
+  background: rgba(255,255,255,0.05);
+  padding:1em 1.5em;
+  border-radius:12px;
+  min-width:120px;
+  border:1px solid rgba(255,255,255,0.2);
+  font-size:0.95rem;
+}
+
+/* Footer */
+footer { position: fixed; bottom:5px; font-size:0.75rem; color:#64748b; }
+
+/* Bug particle */
+.bug { position:absolute; width:8px; height:8px; background:var(--accent); border-radius:50%; opacity:0.7; pointer-events:none; }
+
 
 ol, ul {
 	list-style: none;
@@ -82,11 +208,6 @@ input, select, textarea {
 		box-sizing: inherit;
 	}
 
-	body {
-		background: #fff;
-		overflow: hidden;
-	}
-
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
 			-moz-animation: none !important;
 			-webkit-animation: none !important;
@@ -99,12 +220,12 @@ input, select, textarea {
 		}
 
 	body, input, select, textarea {
-		color: #fff;
 		font-family: 'Source Sans Pro', sans-serif;
 		font-size: 15pt;
 		font-weight: 300 !important;
 		letter-spacing: -0.025em;
 		line-height: 1.75em;
+		overflow: hidden;
 	}
 
 	a {
@@ -363,6 +484,43 @@ input, select, textarea {
 		top: 0;
 		width: 100%;
 	}
+
+	.home-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.1);
+  border: 2px solid var(--blue);
+  color: var(--blue);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+}
+
+.home-btn:hover {
+  transform: scale(1.1) rotate(-10deg);
+  background: var(--blue);
+  color: var(--dark);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.home-btn:hover i {
+  animation: float 1s ease-in-out infinite;
+}
 
 /* Main */
 
@@ -1079,3 +1237,5 @@ input, select, textarea {
 		#header nav {
 			padding: 0 1em;
 		} }
+
+		

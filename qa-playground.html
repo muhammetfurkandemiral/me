@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Furkan QA Playground</title>
+<link rel="stylesheet" href="assets/css/main.css">
+<style>
+
+</style>
+</head>
+<body>
+<a href="index.html" class="home-btn inspectable">
+  <i>🏠</i>
+</a>
+
+<!-- Avatar + gözler -->
+<div class="avatar inspectable">
+  <img src="assets/css/avatarbg.png" alt="Furkan Avatar">
+  <div class="eye left"><div class="pupil"></div></div>
+  <div class="eye right"><div class="pupil"></div></div>
+</div>
+
+<h1 class="inspectable">Zero Bugs Detected 🧪</h1>
+<h2 class="inspectable">QA mode: ON</h2>
+
+<div class="counter inspectable">
+  Last bug found: <span id="daysAgo"></span>
+</div>
+
+<div>
+  <button class="btn inspectable" id="findBugBtn">Find a Bug 🐞</button>
+  <button class="btn inspectable" id="toggleDarkBtn">Toggle Dark/Light 🌗</button>
+</div>
+
+<div class="dashboard">
+  <div class="card inspectable">SLA Fail Rate: 8%</div>
+  <div class="card inspectable">Bugs Fixed: 42</div>
+  <div class="card inspectable">Automations Run: 128</div>
+</div>
+
+<div id="bugMessage" class="message">You found one 👀 QA approved ✅</div>
+<footer>© 2025 Furkan Demiral — QA Playground</footer>
+
+<script>
+// Mouse tracking handler
+const mouseTrackHandler = (e) => {
+  const eyes = document.querySelectorAll('.eye');
+  eyes.forEach(eye => {
+    const pupil = eye.querySelector('.pupil');
+    const rect = eye.getBoundingClientRect();
+    const eyeCenterX = rect.left + rect.width/2;
+    const eyeCenterY = rect.top + rect.height/2;
+    
+    const dx = e.clientX - eyeCenterX;
+    const dy = e.clientY - eyeCenterY;
+    const angle = Math.atan2(dy, dx);
+    
+    const maxDistance = 8;
+    const distance = Math.min(maxDistance, Math.sqrt(dx*dx + dy*dy) / 25);
+    
+    requestAnimationFrame(() => {
+      pupil.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+    });
+  });
+};
+
+// Enable mouse tracking by default
+document.addEventListener('mousemove', mouseTrackHandler);
+
+// Bug creation and tracking
+function createBugParticle() {
+  document.removeEventListener('mousemove', mouseTrackHandler);
+
+  const bug = document.createElement('div');
+  bug.className = 'bug-emoji';
+  bug.textContent = '🐞';
+  
+  // Get avatar boundaries
+  const avatar = document.querySelector('.avatar');
+  const avatarRect = avatar.getBoundingClientRect();
+  
+  // Generate random position outside avatar area
+  let x, y;
+  do {
+    x = Math.random() * (window.innerWidth - 50);
+    y = Math.random() * (window.innerHeight - 50);
+  } while (
+    x > avatarRect.left - 50 && 
+    x < avatarRect.right + 50 && 
+    y > avatarRect.top - 50 && 
+    y < avatarRect.bottom + 50
+  );
+  
+  bug.style.left = x + 'px';
+  bug.style.top = y + 'px';
+  
+  document.body.appendChild(bug);
+
+  // Track and shoot the bug
+  const trackBug = () => {
+    const eyes = document.querySelectorAll('.eye');
+    const eye1 = eyes[0].getBoundingClientRect();
+    const eye2 = eyes[1].getBoundingClientRect();
+    
+    // Bug'a gözleri çevir
+    eyes.forEach(eye => {
+      const pupil = eye.querySelector('.pupil');
+      const rect = eye.getBoundingClientRect();
+      const eyeCenterX = rect.left + rect.width/2;
+      const eyeCenterY = rect.top + rect.height/2;
+      
+      const eyeToBugX = x - eyeCenterX;
+      const eyeToBugY = y - eyeCenterY;
+      const eyeAngle = Math.atan2(eyeToBugY, eyeToBugX);
+      const maxDistance = 8;
+      const pupilDistance = Math.min(maxDistance, Math.sqrt(eyeToBugX*eyeToBugX + eyeToBugY*eyeToBugY) / 25);
+      
+      pupil.style.transform = `translate(${Math.cos(eyeAngle) * pupilDistance}px, ${Math.sin(eyeAngle) * pupilDistance}px)`;
+
+      // Her göz için ayrı lazer
+      const laser = document.createElement('div');
+      laser.className = 'laser';
+      laser.style.left = (eyeCenterX) + 'px';
+      laser.style.top = (eyeCenterY) + 'px';
+      laser.style.setProperty('--final-width', `${Math.sqrt(eyeToBugX*eyeToBugX + eyeToBugY*eyeToBugY)}px`);
+      laser.style.transform = `rotate(${eyeAngle}rad)`;
+      
+      document.body.appendChild(laser);
+    });
+
+    // Cleanup ve mouse tracking'i geri getir
+    setTimeout(() => {
+      document.querySelectorAll('.laser').forEach(l => l.remove());
+      bug.style.opacity = '0';
+      setTimeout(() => {
+        bug.remove();
+        document.addEventListener('mousemove', mouseTrackHandler);
+      }, 300);
+    }, 300);
+  };
+
+  setTimeout(trackBug, 100);
+}
+
+// Bug sayacı için değişkenler
+let bugsFixed = localStorage.getItem('bugsFixed') ? parseInt(localStorage.getItem('bugsFixed')) : 42;
+let lastBugDate = localStorage.getItem('lastBugDate') ? new Date(localStorage.getItem('lastBugDate')) : new Date();
+
+// Zaman farkını hesaplayan fonksiyon
+function timeAgo(date) {
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+  
+  if (seconds <= 1) return '1 second ago';
+  if (seconds < 60) return `${seconds} seconds ago`;
+  
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+  
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+  
+  const days = Math.floor(hours / 24);
+  return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+}
+
+// Süre gösterimini güncelle
+function updateLastBugDisplay() {
+  const daysAgo = document.getElementById('daysAgo');
+  daysAgo.textContent = timeAgo(lastBugDate);
+}
+
+// Her saniye süreyi güncelle
+setInterval(updateLastBugDisplay, 1000);
+
+// İlk yükleme için süreyi göster
+updateLastBugDisplay();
+
+// Bug fixed card'ını güncelle
+function updateBugCount() {
+  const bugCard = document.querySelector('.card:nth-child(2)');
+  bugCard.textContent = `Bugs Fixed: ${bugsFixed}`;
+}
+
+// İlk yükleme için sayacı güncelle
+updateBugCount();
+
+// Add these variables at the top of your script
+let messageTimeout;
+let lastClickTime = 0;
+
+// Replace the existing button click handler with this new one
+document.getElementById('findBugBtn').addEventListener('click', () => {
+  const msg = document.getElementById('bugMessage');
+  const now = Date.now();
+  
+  // Clear existing timeout and message
+  clearTimeout(messageTimeout);
+  msg.classList.remove('show');
+  
+  createBugParticle();
+  
+  // Update bug count and localStorage
+  bugsFixed++;
+  localStorage.setItem('bugsFixed', bugsFixed);
+  
+  // Update last bug time
+  lastBugDate = new Date();
+  localStorage.setItem('lastBugDate', lastBugDate.toISOString());
+  
+  updateBugCount();
+  updateLastBugDisplay();
+  lastClickTime = now;
+
+  // Show total bugs message after 5 seconds of inactivity
+  messageTimeout = setTimeout(() => {
+    msg.textContent = `You found total ${bugsFixed} bugs! 🎯`;
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2500);
+  }, 5000);
+});
+</script>
+</body>
+</html>
