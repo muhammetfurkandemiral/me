@@ -870,6 +870,12 @@ input, select, textarea {
 /* Footer */
 
 	#footer {
+		position: fixed;
+		bottom: 10px;
+		width: 100%;
+		text-align: center;
+		font-size: 0.8em;
+		color: rgba(255, 255, 255, 0.5);
 		background-image: -moz-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0.5) 75%);
 		background-image: -webkit-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0.5) 75%);
 		background-image: -ms-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0.5) 75%);
@@ -883,6 +889,13 @@ input, select, textarea {
 		text-align: center;
 		width: 100%;
 	}
+
+	@media screen and (max-height: 600px) {
+  footer {
+    display: none;
+  }
+}
+</style>
 
 /* Wide */
 
@@ -1060,6 +1073,10 @@ input, select, textarea {
 
 			body, input, select, textarea {
 				font-size: 11pt;
+			}
+
+			footer {
+				display: none;
 			}
 
 		/* BG */
