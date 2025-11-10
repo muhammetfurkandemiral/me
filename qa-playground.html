@@ -222,6 +222,17 @@ document.getElementById('findBugBtn').addEventListener('click', () => {
     setTimeout(() => msg.classList.remove('show'), 2500);
   }, 5000);
 });
+
+// Add to your JavaScript code
+document.getElementById('toggleDarkBtn').addEventListener('click', () => {
+  const eyes = document.querySelectorAll('.eye');
+  const isDark = eyes[0].style.backgroundColor === 'red';
+  
+  eyes.forEach(eye => {
+    eye.style.backgroundColor = isDark ? '#fff' : 'red';
+    eye.style.transition = 'background-color 0.3s ease';
+  });
+});
 </script>
 </body>
 </html>
